@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="A modern, responsive, production-ready 2048 game built with pure HTML5, CSS3, and Vanilla JavaScript.">
+  <meta name="theme-color" content="#faf8ef">
+  <title>2048 - Classic Number Puzzle Game</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-wrapper">
+    <!-- Header with Game Title and Scoreboards -->
+    <header class="header">
+      <div class="title-container">
+        <h1 class="logo">2048</h1>
+      </div>
+      <div class="scores-container">
+        <div class="score-card" id="current-score-card">
+          <span class="score-label">SCORE</span>
+          <span class="score-value" id="score">0</span>
+          <div class="score-popup-container" id="score-popup-container"></div>
+        </div>
+        <div class="score-card">
+          <span class="score-label">BEST</span>
+          <span class="score-value" id="best-score">0</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Subheader with tagline and game control buttons -->
+    <section class="controls-bar" aria-label="Game controls">
+      <p class="tagline">Join the numbers and get to the <strong>2048 tile!</strong></p>
+      <div class="button-group">
+        <button id="theme-toggle" class="btn btn-icon" title="Toggle Dark/Light Mode" aria-label="Toggle Dark/Light Mode">
+          <svg class="theme-icon sun-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg class="theme-icon moon-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+        <button id="undo-btn" class="btn btn-secondary" title="Undo last move" disabled>
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 14 4 9l5-5"/>
+            <path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5v0a5.5 5.5 0 0 1-5.5 5.5H11"/>
+          </svg>
+          <span>Undo</span>
+        </button>
+        <button id="new-game-btn" class="btn btn-primary">New Game</button>
+      </div>
+    </section>
+
+    <!-- Main Game Board Container -->
+    <main class="game-container" id="game-container">
+      <div class="game-board" id="game-board">
+        <!-- 4x4 Background Grid (16 Static Cells) -->
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+
+        <!-- Dynamic Animated Tile Layer -->
+        <div class="tile-container" id="tile-container"></div>
+
+        <!-- Modal Overlay: You Win! -->
+        <div class="game-overlay" id="win-overlay" aria-hidden="true">
+          <div class="overlay-content">
+            <h2 class="overlay-title win-title">You Win!</h2>
+            <p class="overlay-desc">You've reached the 2048 tile! What's next?</p>
+            <div class="overlay-buttons">
+              <button id="keep-going-btn" class="btn btn-primary">Keep Going</button>
+              <button id="win-restart-btn" class="btn btn-secondary">New Game</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal Overlay: Game Over! -->
+        <div class="game-overlay" id="gameover-overlay" aria-hidden="true">
+          <div class="overlay-content">
+            <h2 class="overlay-title gameover-title">Game Over!</h2>
+            <p class="overlay-desc">No more moves possible.</p>
+            <div class="overlay-buttons">
+              <button id="try-again-btn" class="btn btn-primary">Try Again</button>
+              <button id="overlay-undo-btn" class="btn btn-secondary" style="display: none;">Undo Move</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Instructions & Footnotes -->
+    <footer class="game-instructions">
+      <p>
+        <strong>HOW TO PLAY:</strong> Use your <strong>Arrow keys</strong> or <strong>WASD</strong> (or <strong>swipe</strong> on touch screens) to slide tiles. 
+        When two tiles with the same number collide, they <strong>merge into one!</strong>
+      </p>
+      <div class="instructions-meta">
+        <span>Desktop: Arrow Keys / WASD</span>
+        <span>&bull;</span>
+        <span>Mobile: Touch Swipes</span>
+        <span>&bull;</span>
+        <span>Undo: Ctrl+Z</span>
+      </div>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
+
